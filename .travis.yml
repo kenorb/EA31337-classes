@@ -20,6 +20,7 @@ env:
   - CMD="docker-compose run TickerTest"
   - CMD="docker-compose run TimerTest"
   - CMD="docker-compose run TradeTest"
+  - CMD="docker-compose run WebTest"
 before_script:
 - cd tests
 script:
