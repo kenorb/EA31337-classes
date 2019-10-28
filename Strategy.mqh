@@ -126,8 +126,9 @@ struct StgParams {
  Trade            *trade;               // Pointer to Trade class.
  Indicator        *data;                // Pointer to Indicator class.
  Strategy         *sl, *tp;             // Pointers to Strategy class (stop-loss and profit-take).
- // Constructor.
- StgParams(Trade *_trade = NULL, Indicator *_data = NULL, Strategy *_sl = NULL, Strategy *_tp = NULL) :
+
+  // Constructor.
+  StgParams(Trade *_trade = NULL, Indicator *_data = NULL, Strategy *_sl = NULL, Strategy *_tp = NULL) :
    trade(_trade),
    data(_data),
    sl(_sl),
@@ -150,16 +151,16 @@ struct StgParams {
    tp_max(0),
    sl_max(0),
    refresh_time(0)
- {}
- // Deconstructor.
- ~StgParams() {}
- // Struct methods.
- void SetId(ulong _id) { id = _id; }
- void SetTf(ENUM_TIMEFRAMES _tf, string _symbol = NULL) {
+  {}
+  // Deconstructor.
+  ~StgParams() {}
+  // Struct methods.
+  void SetId(ulong _id) { id = _id; }
+  void SetTf(ENUM_TIMEFRAMES _tf, string _symbol = NULL) {
    trade = new Trade(_tf, _symbol);
- }
- void SetSignals(long _base, long _open1, long _open2, ENUM_MARKET_EVENT _close1, ENUM_MARKET_EVENT _close2, double _level1, double _level2)
- {
+  }
+  void SetSignals(long _base, long _open1, long _open2, ENUM_MARKET_EVENT _close1, ENUM_MARKET_EVENT _close2, double _level1, double _level2)
+  {
    signal_base_method = _base;
    signal_open_method1 = _open1;
    signal_open_method2 = _open2;
@@ -167,23 +168,23 @@ struct StgParams {
    signal_close_method2 = _close2;
    signal_level1 = _level1;
    signal_level2 = _level2;
- }
- void SetStops(ENUM_TRAIL_TYPE _tp_method, ENUM_TRAIL_TYPE _sl_method) {
+  }
+  void SetStops(ENUM_TRAIL_TYPE _tp_method, ENUM_TRAIL_TYPE _sl_method) {
    tp_method = _tp_method;
    sl_method = _sl_method;
- }
- void SetMaxSpread(double _max_spread) {
+  }
+  void SetMaxSpread(double _max_spread) {
    max_spread = _max_spread;
- }
- void Enabled(bool _enabled) { enabled = _enabled; };
- void Suspended(bool _suspended) { suspended = _suspended; };
- void DeleteObjects() {
+  }
+  void Enabled(bool _enabled) { enabled = _enabled; };
+  void Suspended(bool _suspended) { suspended = _suspended; };
+  void DeleteObjects() {
    delete data;
    delete sl;
    delete tp;
    delete trade;
- }
- string ToString() {
+  }
+  string ToString() {
    return StringFormat("Enabled:%s;Suspended:%s;Id:%d,MagicNo:%d;Weight:%.2f;" +
      "SignalLevel:%.2f/%.2f;OpenMethods:%d/%d/%d;CloseMethods:%d/%d;" +
      "LotSize:%.2f(Factor:%.2f);MaxSpread:%.2f;" +
@@ -200,7 +201,33 @@ struct StgParams {
      tp_max, sl_max
      // @todo: data, sl, tp
      );
- }
+  }
+  string ToCSV(bool _header = false) {
+    return
+      ! _header
+      ? StringFormat(
+        "%d,%d," +
+        "%d,%d,%.2f," +
+        "%.2f,%.2f," +
+        "%d,%d,%d,%d,%d," +
+        "%.2f,%.2f,%.2f," +
+        "%d,%d,%d,%d",
+        enabled,suspended,
+        id, magic_no, weight,
+        signal_level1, signal_level2,
+        signal_base_method, signal_open_method1, signal_open_method1, signal_close_method1, signal_close_method2,
+        lot_size, lot_size_factor, max_spread,
+        tp_method, sl_method, tp_max, sl_max
+        // @todo: data, sl, tp
+        )
+      :
+        "Enabled,Suspended," +
+        "Id,Magic No,Weight," +
+        "Signal Level 1,Signal Level 2," +
+        "Base Method,Open Method 1,Open Method 2,Close Method 1,Close Method 2," +
+        "LotSize,Factor,MaxSpread," +
+        "TP Method,SL Method,TP Max,SL Max";
+  }
 };
 
 class Strategy : public Object {
@@ -852,6 +879,13 @@ class Strategy : public Object {
       StringFormat("%s: %s",
         GetName(), sparams.ToString()
       );
+  }
+
+  /**
+   * Prints strategy data in CSV format.
+   */
+  string ToCSV(bool _header = false) {
+    return sparams.ToCSV(_header);
   }
 
   /* Virtual methods */

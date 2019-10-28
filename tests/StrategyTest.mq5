@@ -91,7 +91,10 @@ int OnInit() {
       EnumToString(strat1.Chart().GetTf())));
 
   // Output.
+  Print(strat1.GetName(), ": Strategy: ", strat1.ToString());
   Print(strat1.GetName(), ": Market: ", strat1.Chart().ToString());
+  Print(strat1.GetName(), ": CSV (header): ", strat1.ToCSV(true));
+  Print(strat1.GetName(), ": CSV (data): ", strat1.ToCSV());
 
   /* Test 2nd strategy. */
 
@@ -126,7 +129,10 @@ int OnInit() {
   assertFalseOrFail(strat2.IsSuspended(), "Fail on IsSuspended()!");
 
   // Output.
+  Print(strat2.GetName(), ": Strategy: ", strat2.ToString());
   Print(strat2.GetName(), ": Market: ", strat2.Chart().ToString());
+  Print(strat2.GetName(), ": CSV (header): ", strat2.ToCSV(true));
+  Print(strat2.GetName(), ": CSV (data): ", strat2.ToCSV());
 
   return (INIT_SUCCEEDED);
 }
